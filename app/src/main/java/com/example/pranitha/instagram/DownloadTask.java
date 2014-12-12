@@ -33,7 +33,7 @@ public class DownloadTask extends AsyncTask<String, Void, Boolean> {
         super.onPostExecute(result);
         v.setImageBitmap(bm);
     }
-
+//Here The image view is loaded with the image from given image URL
     public static Bitmap loadBitmap(String url) {
         try {
             URL newurl = new URL(url);

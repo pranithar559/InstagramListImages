@@ -15,6 +15,7 @@ import java.util.Map;
 /**
  * Created by Pranitha on 11-12-14.
  */
+//here we are defining the custom grid adapter for the grid view
 public class CustomGridAdapter extends SimpleAdapter {
     private Context mContext;
     public LayoutInflater inflater = null;
@@ -34,11 +35,7 @@ public class CustomGridAdapter extends SimpleAdapter {
             vi = inflater.inflate(R.layout.list_row, null);
 
         HashMap<String, Object> data = (HashMap<String, Object>) getItem(position);
-
-        /*TextView Vid=(TextView) vi.findViewById(R.id.id);
-        Vid.setText(" Age:"+data.get("id"));
-        TextView Vname=(TextView) vi.findViewById(R.id.name);
-        Vname.setText(" Name:"+data.get("name"));*/
+//here for loading every grid view item, we call an async task where the image url is loaded into imageview
         new DownloadTask((ImageView) vi.findViewById(R.id.image))
                 .execute((String) data.get("url"));
 

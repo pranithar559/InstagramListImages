@@ -30,7 +30,6 @@ import java.util.HashMap;
 
 public class ListView extends Activity {
     String jsonString =null;
-    //HashMap<String, Object> map = new HashMap<String, Object>();
     Bitmap bmp;
     CustomGridAdapter adapter;
     ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
@@ -38,40 +37,36 @@ public class ListView extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //We have set a grid view as the layout for this activity and fetched the json data passed from main activity into jsonstring
         setContentView(R.layout.activity_list_view);
         Intent intent = getIntent();
         jsonString = intent.getStringExtra("JSON_STRING");
         gv= (GridView) findViewById(R.id.list1);
+        //here we have set onclicklistener to the grid view, so that when ever an item in grid view is clicked, it shows the image in a dialog box
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             public void onItemClick(AdapterView<?> parent,
                                     View v, int position, long id)
             {
-                /*Toast.makeText(getBaseContext(),
-                        "pic" + (position + 1) + " selected",
-                        Toast.LENGTH_SHORT).show();*/
+
                 HashMap<String, String> m = new HashMap<String, String>();
                 m=list.get(position);
                 int width= Integer.valueOf((String) m.get("width"));
                 int height= Integer.valueOf((String) m.get("height"));
-
-
+                //the loadphoto method displays the alert dialog
                 loadPhoto((ImageView)findViewById(R.id.image),width,height);
             }
         });
-        parseJsonString();
 
+        //here we are loading the jsonstring data into the grid view
+        parseJsonString();
     }
 
     private void loadPhoto(ImageView imageView,int width,int height) {
 
         ImageView tempImageView = imageView;
-
-
         AlertDialog.Builder imageDialog = new AlertDialog.Builder(this);
-
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
-
         View layout = inflater.inflate(R.layout.custom_fullimage_dialog,
                 (ViewGroup) findViewById(R.id.layout_root));
         ImageView image = (ImageView) layout.findViewById(R.id.fullimage);
@@ -84,27 +79,25 @@ public class ListView extends Activity {
             }
 
         });
-
         AlertDialog alertDialog = imageDialog.create();
         alertDialog.show();
         alertDialog.getWindow().setLayout(width*2, height*2);
-        //imageDialog.create();
-        //imageDialog.show();
     }
+
+    //this method loads the json data into grid view
     public void parseJsonString(){
         try {
+           // The json data is parsed here to get image url from images object
             JSONObject jsonObj = new JSONObject(jsonString);
-
             JSONArray Jlist = jsonObj.getJSONArray("data");
-            for(int k=0;k<Jlist.length();k++) {
+            for(int k=0;k<Jlist.length();k++)
+            {
                 JSONObject JObj = Jlist.getJSONObject(k);
                 JSONObject jImages= JObj.getJSONObject("images");
-                //for (int i = 0; i < JImages.length(); i++) {
-                    //JSONObject mJsonObj = JImages.getJSONObject(i);
-                    updateMap(jImages);
-
-                //}
+                //the update map method adds the image URL to the array list which is updated in grid view
+                updateMap(jImages);
             }
+            //finally we define a custom adapter with listrow as layout for each item in the grid and list as input and set it to the grid view
             adapter = new CustomGridAdapter(getApplicationContext(), list,
                     R.layout.list_row, new String[]{}, new int[]{});
             gv.setAdapter(adapter);
@@ -114,8 +107,8 @@ public class ListView extends Activity {
     }
 
     private void updateMap(JSONObject mJsonObj) {
-
         try {
+            //There are 3 different URL for each image based on resolution, we are parsing those  data here and adding them to list
             HashMap<String, String> map = new HashMap<String, String>();
             JSONObject big = mJsonObj.getJSONObject("standard_resolution");
             String width = big.getString("width");
@@ -146,7 +139,7 @@ public class ListView extends Activity {
             list.add(mapSmall);
 
         }  catch(Exception e){
-            Log.i("GetConnection", "Error in doInBackgroung" + e);
+            Log.i("GetConnection", "Error in doInBackground" + e);
         }
     }
 
